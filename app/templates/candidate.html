@@ -7,9 +7,17 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/styles.css?v=20260517b">
+  <link rel="stylesheet" href="/static/css/styles.css?v=20260517c">
 </head>
 <body class="candidate-body candidate-body-clean">
+  <div class="app-loader" id="app-loader">
+    <div class="app-loader-card">
+      <div class="app-loader-ring"></div>
+      <p class="app-loader-eyebrow">Aether Resume OS</p>
+      <h2>Preparing your AI hiring workspace</h2>
+      <p>Loading roles, resume intelligence, and candidate tools.</p>
+    </div>
+  </div>
   <div class="theme-orb orb-one"></div>
   <div class="theme-orb orb-two"></div>
 
@@ -261,6 +269,15 @@
     </section>
   </div>
 
-  <script src="/static/js/app.js?v=20260517b"></script>
+  <script>
+    window.addEventListener("load", () => {
+      const loader = document.getElementById("app-loader");
+      if (loader) {
+        loader.classList.add("is-hidden");
+        setTimeout(() => loader.remove(), 520);
+      }
+    });
+  </script>
+  <script src="/static/js/app.js?v=20260517c"></script>
 </body>
 </html>

@@ -1,4 +1,5 @@
 import mimetypes
+from io import BytesIO
 from pathlib import Path
 from uuid import uuid4
 
@@ -18,6 +19,8 @@ from .services.scoring import deserialize_list, score_candidate, serialize_list
 
 
 BASE_DIR = Path(__file__).resolve().parent
+PROJECT_DIR = BASE_DIR.parent
+SAMPLE_DATA_DIR = PROJECT_DIR / "sample_data"
 UPLOAD_DIR = DATA_DIR / "uploads"
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -31,6 +34,45 @@ DEMO_HR_PASSWORD = "HR12345"
 DEMO_HR_NAME = "Ava Sharma"
 
 
+DEMO_JOB_ROLES = [
+    {
+        "title": "HR Analytics Engineer",
+        "department": "Talent Ops",
+        "location": "Noida",
+        "employment_type": "Full-time",
+        "description": "We need Python, FastAPI, SQL, Git, NLP, machine learning, REST API, HTML, CSS and communication skills.",
+    },
+    {
+        "title": "Demo Recruiter Role",
+        "department": "HR Tech",
+        "location": "Remote",
+        "employment_type": "Full-time",
+        "description": "Need Python FastAPI SQL Git communication HTML CSS machine learning and NLP experience.",
+    },
+    {
+        "title": "Product Data Analyst",
+        "department": "Analytics",
+        "location": "Remote",
+        "employment_type": "Full-time",
+        "description": "Need Python SQL communication machine learning NLP and REST API skills.",
+    },
+    {
+        "title": "Backend Python Engineer",
+        "department": "Engineering",
+        "location": "Remote",
+        "employment_type": "Full-time",
+        "description": "Need Python FastAPI SQL Git NLP machine learning communication REST API.",
+    },
+]
+
+
+DEMO_APPLICATIONS = [
+    {"job_index": 0, "file_name": "ananya_sharma_resume.txt", "manual_name": "Ananya Sharma", "manual_email": "", "manual_phone": ""},
+    {"job_index": 1, "file_name": "sneha_iyer_resume.txt", "manual_name": "Sneha Iyer", "manual_email": "", "manual_phone": ""},
+    {"job_index": 2, "file_name": "rahul_verma_resume.txt", "manual_name": "Rahul Verma", "manual_email": "", "manual_phone": ""},
+]
+
+
 def initialize_database() -> None:
     try:
         Base.metadata.create_all(bind=engine)
@@ -40,6 +82,126 @@ def initialize_database() -> None:
 
 
 initialize_database()
+
+
+def build_simple_pdf(text: str) -> bytes:
+    def pdf_escape(value: str) -> str:
+        return value.replace("\\", "\\\\").replace("(", "\\(").replace(")", "\\)")
+
+    y_position = 790
+    content_lines = ["BT", "/F1 12 Tf", "50 790 Td", "14 TL"]
+    for line in text.splitlines():
+        safe_line = pdf_escape(line)
+        content_lines.append(f"({safe_line}) Tj")
+        content_lines.append("T*")
+        y_position -= 14
+        if y_position <= 60:
+            break
+    content_lines.append("ET")
+    stream = "\n".join(content_lines).encode("latin-1", errors="ignore")
+
+    objects = [
+        b"<< /Type /Catalog /Pages 2 0 R >>",
+        b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+        f"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>".encode(),
+        b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+        f"<< /Length {len(stream)} >>\nstream\n".encode() + stream + b"\nendstream",
+    ]
+
+    pdf = bytearray(b"%PDF-1.4\n")
+    offsets = [0]
+    for index, obj in enumerate(objects, start=1):
+        offsets.append(len(pdf))
+        pdf.extend(f"{index} 0 obj\n".encode())
+        pdf.extend(obj)
+        pdf.extend(b"\nendobj\n")
+
+    xref_start = len(pdf)
+    pdf.extend(f"xref\n0 {len(objects) + 1}\n".encode())
+    pdf.extend(b"0000000000 65535 f \n")
+    for offset in offsets[1:]:
+        pdf.extend(f"{offset:010d} 00000 n \n".encode())
+    pdf.extend(
+        f"trailer\n<< /Size {len(objects) + 1} /Root 1 0 R >>\nstartxref\n{xref_start}\n%%EOF".encode()
+    )
+    return bytes(pdf)
+
+
+def ensure_demo_resume_pdf() -> None:
+    source = SAMPLE_DATA_DIR / "ananya_sharma_resume.txt"
+    target = SAMPLE_DATA_DIR / "demo_resume_ananya.pdf"
+    if not source.exists() or target.exists():
+        return
+    target.write_bytes(build_simple_pdf(source.read_text(encoding="utf-8")))
+
+
+def seed_demo_content() -> None:
+    ensure_demo_resume_pdf()
+    db = Session(bind=engine)
+    try:
+        jobs_by_title = {job.title: job for job in db.query(JobRole).all()}
+        created_or_existing_jobs: list[JobRole] = []
+        for job_payload in DEMO_JOB_ROLES:
+            job = jobs_by_title.get(job_payload["title"])
+            if not job:
+                job = JobRole(**job_payload)
+                db.add(job)
+                db.flush()
+                jobs_by_title[job.title] = job
+            created_or_existing_jobs.append(job)
+        db.commit()
+
+        if db.query(JobApplication).count() == 0:
+            for item in DEMO_APPLICATIONS:
+                sample_path = SAMPLE_DATA_DIR / item["file_name"]
+                if not sample_path.exists():
+                    continue
+                content = sample_path.read_bytes()
+                parsed_text = extract_text_from_upload(sample_path.name, content)
+                application = build_application_record(
+                    job=created_or_existing_jobs[item["job_index"]],
+                    upload=UploadFile(filename=sample_path.name, file=BytesIO(content)),
+                    content=content,
+                    parsed_text=parsed_text,
+                    manual_name=item["manual_name"],
+                    manual_email=item["manual_email"],
+                    manual_phone=item["manual_phone"],
+                )
+                db.add(application)
+
+            db.commit()
+
+            for job in created_or_existing_jobs:
+                rerank_job_applications(db, job.id)
+
+        request_source = SAMPLE_DATA_DIR / "demo_resume_ananya.pdf"
+        if request_source.exists() and db.query(JobRequest).count() == 0:
+            request_content = request_source.read_bytes()
+            request_text = extract_text_from_upload(request_source.name, request_content)
+            request_payload = score_candidate(request_source.name, request_text, "Future role request based on resume")
+            stored_name, stored_path = store_upload(request_content, request_source.name, "job-requests")
+            db.add(
+                JobRequest(
+                    file_name=request_source.name,
+                    stored_file_name=stored_name,
+                    resume_path=stored_path,
+                    candidate_name=request_payload["candidate_name"] or "Ananya Sharma",
+                    email=request_payload["email"] or "ananya.sharma@example.com",
+                    phone=request_payload["phone"] or "+91 98765 43210",
+                    requested_role="Any future Python / AI role related to my resume",
+                    summary=short_summary(request_payload),
+                    skills=serialize_list(request_payload["skills"]),
+                    education=serialize_list(request_payload["education"]),
+                    experience_highlights=serialize_list(request_payload["experience_highlights"]),
+                    extracted_text=request_payload["extracted_text"],
+                )
+            )
+            db.commit()
+    finally:
+        db.close()
+
+
+seed_demo_content()
 
 
 def get_hr_session(request: Request) -> dict | None:
