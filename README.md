@@ -59,3 +59,16 @@ Demo HR credentials:
 - Image-only PDFs without selectable text cannot be parsed unless OCR is added.
 - The app is designed as a standalone screening tool and does not include ATS integration or automated candidate communication.
 - The preprocessing layer mirrors the synopsis workflow and is designed to be easy to upgrade to spaCy or NLTK later.
+
+## Deployment
+
+### Recommended backend deployment
+
+This project is a FastAPI app with server-rendered HTML templates, file uploads, and a Python backend, so the simplest production deployment is a Python web host such as Render.
+
+- Build command: `pip install -r requirements.txt`
+- Start command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT --app-dir .`
+
+### Netlify note
+
+Netlify is a good fit for the frontend layer or custom domain/proxy setup, but this repository should not be deployed on Netlify by itself as a full Python app. If you want to use Netlify, deploy the FastAPI backend first on Render, then point Netlify to that backend with a proxy rule.
