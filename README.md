@@ -67,7 +67,7 @@ Demo HR credentials:
 This project is a FastAPI app with server-rendered HTML templates, file uploads, and a Python backend, so the simplest production deployment is a Python web host such as Render.
 
 - Build command: `pip install -r requirements.txt`
-- Start command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT --app-dir .`
+- Start command: `python run_render.py`
 
 ### Netlify note
 
