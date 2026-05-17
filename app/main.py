@@ -1,3 +1,4 @@
+import logging
 import mimetypes
 from io import BytesIO
 from pathlib import Path
@@ -23,6 +24,7 @@ PROJECT_DIR = BASE_DIR.parent
 SAMPLE_DATA_DIR = PROJECT_DIR / "sample_data"
 UPLOAD_DIR = DATA_DIR / "uploads"
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+logger = logging.getLogger(__name__)
 
 app = FastAPI(title="AI-Powered Resume Screening System")
 app.add_middleware(SessionMiddleware, secret_key="demo-hr-dashboard-secret", same_site="lax")
@@ -174,7 +176,7 @@ def seed_demo_content() -> None:
             for job in created_or_existing_jobs:
                 rerank_job_applications(db, job.id)
 
-        request_source = SAMPLE_DATA_DIR / "demo_resume_ananya.pdf"
+        request_source = SAMPLE_DATA_DIR / "ananya_sharma_resume.txt"
         if request_source.exists() and db.query(JobRequest).count() == 0:
             request_content = request_source.read_bytes()
             request_text = extract_text_from_upload(request_source.name, request_content)
@@ -199,9 +201,6 @@ def seed_demo_content() -> None:
             db.commit()
     finally:
         db.close()
-
-
-seed_demo_content()
 
 
 def get_hr_session(request: Request) -> dict | None:
@@ -373,6 +372,14 @@ def build_application_record(
         match_percentage=payload["match_percentage"],
         rank_position=0,
     )
+
+
+@app.on_event("startup")
+def app_startup() -> None:
+    try:
+        seed_demo_content()
+    except Exception:
+        logger.exception("Demo seed failed during startup.")
 
 
 @app.exception_handler(HTTPException)
