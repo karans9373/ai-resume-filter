@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aether Resume OS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Cormorant+Garamond:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body class="landing-body hr-light-body">
+  <div class="aurora hr-light-aurora"></div>
+  <div class="hr-theme-circle hr-theme-circle-one"></div>
+  <div class="hr-theme-circle hr-theme-circle-two"></div>
+  <main class="landing-shell">
+    <header class="landing-topbar">
+      <div class="brand-lockup">
+        <span class="brand-chip">Aether Resume OS</span>
+        <span class="brand-subtle">Modern HR screening dashboard</span>
+      </div>
+      <div class="top-actions">
+        <a class="ghost-link" href="/hr/login" target="_blank" rel="noreferrer">HR Login</a>
+        <a class="solid-link" href="/hr/demo-login" target="_blank" rel="noreferrer">Open Demo Dashboard</a>
+      </div>
+    </header>
+
+    <section class="landing-hero">
+      <div class="landing-copy glass-card">
+        <p class="eyebrow">For recruiters who need signal, not noise</p>
+        <h1>Manage roles, review applications, and shortlist the right people in one clean workspace.</h1>
+        <p class="lede">
+          A structured HR portal for role-based hiring. Create job listings, track every application under the right role,
+          preview resumes, view contact details instantly, and keep the shortlist focused.
+        </p>
+        <div class="cta-row">
+          <a class="solid-link large-link" href="/hr/demo-login" target="_blank" rel="noreferrer">Direct Demo Login</a>
+          <a class="ghost-link large-link" href="/hr/login" target="_blank" rel="noreferrer">Login as HR</a>
+        </div>
+        <div class="demo-credentials">
+          <span>Demo HR Email: <strong>{{ demo_hr_email }}</strong></span>
+          <span>Password: <strong>{{ demo_hr_password }}</strong></span>
+        </div>
+      </div>
+
+      <aside class="preview-stack">
+        <article class="metric-panel glass-card">
+          <span>Active Roles</span>
+          <strong>{{ job_count }}</strong>
+        </article>
+        <article class="metric-panel glass-card">
+          <span>Total Applications</span>
+          <strong>{{ application_count }}</strong>
+        </article>
+        <article class="feature-panel glass-card">
+          <h2>Inside the dashboard</h2>
+          <ul>
+            <li>Full job listing view with role cards and application counts</li>
+            <li>Direct candidate email and phone visibility</li>
+            <li>Resume preview in a new tab</li>
+            <li>Fast delete action for non-fit candidates</li>
+          </ul>
+        </article>
+      </aside>
+    </section>
+
+    <section class="hr-landing-grid">
+      <article class="hr-landing-card glass-card">
+        <p class="eyebrow">Workflow</p>
+        <h2>Organized for real hiring flow</h2>
+        <div class="hr-step-list">
+          <div class="hr-step-item">
+            <span>01</span>
+            <div>
+              <strong>Create Job Listing</strong>
+              <p>Add role title, department, location, type, and job description.</p>
+            </div>
+          </div>
+          <div class="hr-step-item">
+            <span>02</span>
+            <div>
+              <strong>Receive Applications</strong>
+              <p>Upload multiple resumes and attach them to the correct role.</p>
+            </div>
+          </div>
+          <div class="hr-step-item">
+            <span>03</span>
+            <div>
+              <strong>Review Ranked Candidates</strong>
+              <p>See score, contact details, and profile summary in one place.</p>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="hr-landing-card glass-card">
+        <p class="eyebrow">Synopsis Fit</p>
+        <h2>Built around your project criteria</h2>
+        <div class="hr-pill-grid">
+          <span>Resume processing</span>
+          <span>Skill extraction</span>
+          <span>JD similarity</span>
+          <span>Candidate ranking</span>
+          <span>HR dashboard</span>
+          <span>Role-based listing</span>
+        </div>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

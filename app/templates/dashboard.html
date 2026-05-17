@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HR Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Cormorant+Garamond:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/styles.css?v=20260517b">
+</head>
+<body class="dashboard-body hr-dashboard-light">
+  <div class="hr-theme-circle hr-theme-circle-one"></div>
+  <div class="hr-theme-circle hr-theme-circle-two"></div>
+
+  <div class="dashboard-shell">
+    <aside class="dashboard-sidebar glass-card">
+      <div class="sidebar-header">
+        <span class="brand-chip">Aether Resume OS</span>
+        <h1>HR Workspace</h1>
+        <p>{{ hr_user.name }} | {{ hr_user.email }}</p>
+      </div>
+
+      <div class="sidebar-metrics">
+        <article>
+          <span>Roles</span>
+          <strong id="jobs-count">{{ jobs_count }}</strong>
+        </article>
+        <article>
+          <span>Applications</span>
+          <strong id="applications-count">{{ applications_count }}</strong>
+        </article>
+        <article>
+          <span>Job Requests</span>
+          <strong id="job-requests-count">{{ job_request_count }}</strong>
+        </article>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="section-row">
+          <h2>Open Roles</h2>
+          <button type="button" class="mini-button" id="refresh-jobs-button">Refresh</button>
+        </div>
+        <div id="job-list" class="job-list"></div>
+      </div>
+
+      <form method="post" action="/hr/logout">
+        <button type="submit" class="logout-button">Logout</button>
+      </form>
+    </aside>
+
+    <main class="dashboard-main">
+      <section class="dashboard-top">
+        <div class="glass-card top-summary">
+          <p class="eyebrow">Role management</p>
+          <h2>Create and publish a role</h2>
+          <form id="create-job-form" class="job-form">
+            <div class="split-grid">
+              <label>Role Title
+                <input name="title" type="text" placeholder="Senior Python Developer" required>
+              </label>
+              <label>Department
+                <input name="department" type="text" placeholder="Engineering">
+              </label>
+              <label>Location
+                <input name="location" type="text" placeholder="Noida / Remote">
+              </label>
+              <label>Employment Type
+                <input name="employment_type" type="text" placeholder="Full-time">
+              </label>
+            </div>
+            <label>Job Description
+              <textarea name="description" rows="6" placeholder="Describe the role, required skills, and must-have experience." required></textarea>
+            </label>
+            <div class="form-actions">
+              <button type="submit" class="primary-button">Create Job Role</button>
+              <span id="job-form-status" class="muted-copy">This role will appear in the HR list after creation.</span>
+            </div>
+          </form>
+        </div>
+
+        <div class="glass-card top-summary accent">
+          <p class="eyebrow">Hiring flow</p>
+          <h2>Structured review by role</h2>
+          <ul class="compact-list">
+            <li>Each role has its own description, applications, and ranking.</li>
+            <li>Candidates can read open roles on the public page, then analyze and apply.</li>
+            <li>If no listed role matches, their profile goes to a separate Job Requests area.</li>
+            <li>Phone number, email, summary, and uploaded resume stay visible inside HR.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="glass-card dashboard-tabs-card">
+        <div class="dashboard-tab-row">
+          <button type="button" class="dashboard-tab-button active" data-tab="roles">Role Listings</button>
+          <button type="button" class="dashboard-tab-button" data-tab="applications">Applications</button>
+          <button type="button" class="dashboard-tab-button" data-tab="requests">Job Requests</button>
+        </div>
+
+        <div id="tab-roles" class="dashboard-tab-panel">
+          <div class="role-catalog-header">
+            <div>
+              <p class="eyebrow">Role Listing</p>
+              <h2>All job listings</h2>
+              <p class="muted-copy">Click any role to read its description, update it as HR, and keep applications attached below.</p>
+            </div>
+          </div>
+          <div id="role-catalog" class="role-catalog"></div>
+        </div>
+
+        <div id="tab-applications" class="dashboard-tab-panel hidden">
+          <div id="selected-job-empty" class="empty-panel">
+            <h2>No role selected yet</h2>
+            <p>Create a job role or select one from the left to start receiving and managing applications.</p>
+          </div>
+
+          <div id="selected-job-view" class="hidden">
+            <div class="selected-role-card hr-selected-role-card">
+              <div class="role-header">
+                <div>
+                  <p class="eyebrow">Selected role</p>
+                  <h2 id="selected-job-title"></h2>
+                  <p id="selected-job-meta" class="muted-copy"></p>
+                </div>
+                <div class="role-badges">
+                  <span id="selected-job-status" class="badge"></span>
+                  <span id="selected-job-count" class="badge"></span>
+                </div>
+              </div>
+
+              <form id="edit-job-form" class="job-form role-edit-form">
+                <div class="split-grid">
+                  <label>Role Title
+                    <input id="edit-title" name="title" type="text" required>
+                  </label>
+                  <label>Department
+                    <input id="edit-department" name="department" type="text">
+                  </label>
+                  <label>Location
+                    <input id="edit-location" name="location" type="text">
+                  </label>
+                  <label>Employment Type
+                    <input id="edit-employment-type" name="employment_type" type="text">
+                  </label>
+                </div>
+                <div class="split-grid split-grid-tight">
+                  <label>Status
+                    <select id="edit-status" name="status">
+                      <option value="Open">Open</option>
+                      <option value="Paused">Paused</option>
+                      <option value="Closed">Closed</option>
+                    </select>
+                  </label>
+                </div>
+                <label>Job Description
+                  <textarea id="edit-description" name="description" rows="8" required></textarea>
+                </label>
+                <div class="form-actions">
+                  <button type="submit" class="primary-button">Save Job Changes</button>
+                  <span id="edit-job-status" class="muted-copy">Only HR can edit role details here.</span>
+                </div>
+              </form>
+            </div>
+
+            <form id="upload-form" class="upload-form upload-panel">
+              <label>Upload resumes for this role
+                <input id="resume-files" name="resumes" type="file" multiple accept=".pdf,.docx,.txt" required>
+              </label>
+              <div class="form-actions">
+                <button type="submit" class="primary-button">Add Applications</button>
+                <span id="upload-status" class="muted-copy">Applications uploaded here stay attached to this role.</span>
+              </div>
+            </form>
+
+            <div class="summary-strip">
+              <article>
+                <span>Total applications</span>
+                <strong id="metric-total-apps">0</strong>
+              </article>
+              <article>
+                <span>Top match</span>
+                <strong id="metric-top-match">0%</strong>
+              </article>
+              <article>
+                <span>Average match</span>
+                <strong id="metric-average-match">0%</strong>
+              </article>
+            </div>
+
+            <div class="scope-strip">
+              <span class="meta-pill">Role description controlled by HR</span>
+              <span class="meta-pill">Phone and email visible</span>
+              <span class="meta-pill">Resume preview</span>
+              <span class="meta-pill">Ranked shortlist</span>
+            </div>
+
+            <div id="application-grid" class="application-grid"></div>
+          </div>
+        </div>
+
+        <div id="tab-requests" class="dashboard-tab-panel hidden">
+          <div class="role-catalog-header">
+            <div>
+              <p class="eyebrow">Job Requests</p>
+              <h2>Future role requests</h2>
+              <p class="muted-copy">Candidates whose resume did not match a listed job can still appear here for future hiring review.</p>
+            </div>
+          </div>
+          <div id="job-request-grid" class="application-grid"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/static/js/dashboard.js?v=20260517b"></script>
+</body>
+</html>

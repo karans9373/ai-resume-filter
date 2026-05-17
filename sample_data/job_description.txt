@@ -1,0 +1,1 @@
+We are hiring an AI-powered resume screening engineer with strong Python, FastAPI, SQL, MongoDB, NLP, machine learning, scikit-learn, REST API, HTML, CSS, and Git skills. The candidate should be able to build resume text extraction modules, candidate ranking logic, and dashboard-based web applications for HR teams.

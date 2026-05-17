@@ -1,0 +1,17 @@
+Ananya Sharma
+Email: ananya.sharma@example.com
+Phone: +91 98765 43210
+
+Professional Summary
+Python developer with 4 years of experience building FastAPI and Flask applications. Worked on NLP pipelines, scikit-learn based matching systems, and SQL-backed dashboards.
+
+Skills
+Python, FastAPI, Flask, SQL, MongoDB, HTML, CSS, Git, NLP, Machine Learning, scikit-learn, REST API
+
+Experience
+Software Engineer at TalentVision
+Built a resume screening module for HR teams using Python and machine learning.
+Worked on candidate ranking dashboards and API development.
+
+Education
+Bachelor of Technology in Computer Science, ABC University

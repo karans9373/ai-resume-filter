@@ -1,0 +1,16 @@
+Rahul Verma
+Email: rahul.verma@example.com
+Phone: +91 91234 56789
+
+Summary
+Frontend and backend web developer with 2 years experience in JavaScript, React, Node.js, HTML, CSS, SQL, and Git. Built internal admin panels and REST API integrations.
+
+Skills
+JavaScript, React, Node.js, HTML, CSS, SQL, Git, API
+
+Experience
+Developer Intern at BrightStack
+Worked on dashboard interfaces and backend integrations.
+
+Education
+BCA, City College

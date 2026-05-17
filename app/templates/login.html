@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HR Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Cormorant+Garamond:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body class="login-body">
+  <div class="aurora"></div>
+  <main class="login-shell">
+    <section class="login-card glass-card">
+      <p class="eyebrow">Restricted entry</p>
+      <h1>HR Dashboard Login</h1>
+      <p class="lede">Only the HR account can open the dashboard. Use the demo credentials or jump in with the direct demo button.</p>
+
+      {% if error %}
+      <div class="inline-alert">{{ error }}</div>
+      {% endif %}
+
+      <form method="post" action="/hr/login" class="login-form">
+        <label for="email">HR Email</label>
+        <input id="email" name="email" type="email" placeholder="hr@aetherresume.demo" required>
+
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" placeholder="HR12345" required>
+
+        <button type="submit" class="primary-button">Enter Dashboard</button>
+      </form>
+
+      <div class="demo-credentials stacked">
+        <span>Demo Email: <strong>{{ demo_hr_email }}</strong></span>
+        <span>Demo Password: <strong>{{ demo_hr_password }}</strong></span>
+      </div>
+
+      <div class="cta-row narrow">
+        <a class="solid-link" href="/hr/demo-login">Direct Demo Login</a>
+        <a class="ghost-link" href="/">Back Home</a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

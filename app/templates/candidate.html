@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Candidate Resume Workspace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/styles.css?v=20260517b">
+</head>
+<body class="candidate-body candidate-body-clean">
+  <div class="theme-orb orb-one"></div>
+  <div class="theme-orb orb-two"></div>
+
+  <div class="page-shell candidate-shell clean-candidate-shell">
+    <header class="candidate-header-bar">
+      <div>
+        <p class="eyebrow bright-eyebrow">AI Resume Screening</p>
+        <h1 class="candidate-page-title">Candidate Job Match Workspace</h1>
+      </div>
+      <div class="candidate-nav-links">
+        <a class="candidate-link ghost" href="/candidate/job-request" target="_blank" rel="noreferrer">Future Job Request</a>
+        <a class="candidate-link ghost" href="/hr" target="_blank" rel="noreferrer">Admin Portal</a>
+        <a class="candidate-link solid" href="/hr/login" target="_blank" rel="noreferrer">Admin Login</a>
+      </div>
+    </header>
+
+    <section class="candidate-intro-card candidate-panel">
+      <div class="candidate-intro-copy">
+        <h2>Read the role first, analyze your resume next, then apply with one click.</h2>
+        <p>
+          Every job shown here is listed by HR. You can open a role, read its description in a clean
+          format, analyze your resume directly below it, and apply if your profile matches.
+        </p>
+        <div class="candidate-intro-pills">
+          <span>Visible HR-listed roles</span>
+          <span>Read-only job description</span>
+          <span>Structured resume analysis</span>
+        </div>
+      </div>
+      <aside class="candidate-admin-card">
+        <strong>Admin Access</strong>
+        <p>HR can create roles, edit job descriptions, review applications, and manage future job requests.</p>
+        <div class="candidate-admin-actions">
+          <a class="candidate-link solid" href="/hr/login" target="_blank" rel="noreferrer">Go To Admin Login</a>
+          <a class="candidate-link ghost" href="/hr/demo-login" target="_blank" rel="noreferrer">Open Admin Dashboard</a>
+        </div>
+      </aside>
+    </section>
+
+    <section class="candidate-flow-grid">
+      <article class="candidate-panel candidate-steps-card">
+        <div class="section-heading">
+          <h2>Simple Candidate Flow</h2>
+          <p>The page is organized in the same sequence a candidate actually uses it.</p>
+        </div>
+        <div class="candidate-simple-steps">
+          <div class="candidate-simple-step">
+            <span>1</span>
+            <div>
+              <strong>Pick a role listed by HR</strong>
+              <p>View all open roles and open the one you want to understand clearly.</p>
+            </div>
+          </div>
+          <div class="candidate-simple-step">
+            <span>2</span>
+            <div>
+              <strong>Analyze your resume below the role</strong>
+              <p>Upload once and the system fetches your profile, contact details, and role match.</p>
+            </div>
+          </div>
+          <div class="candidate-simple-step">
+            <span>3</span>
+            <div>
+              <strong>Apply or request future consideration</strong>
+              <p>Apply to matching jobs instantly, or send your resume to HR for future roles.</p>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="candidate-panel candidate-summary-card">
+        <div class="section-heading">
+          <h2>Live Summary</h2>
+          <p>Quick overview of the current screening result.</p>
+        </div>
+        <div class="stats-grid" id="stats-grid">
+          <article>
+            <span>Total Candidates</span>
+            <strong id="total-candidates">0</strong>
+          </article>
+          <article>
+            <span>Top Match</span>
+            <strong id="top-match">0%</strong>
+          </article>
+          <article>
+            <span>Average Match</span>
+            <strong id="average-match">0%</strong>
+          </article>
+        </div>
+        <div class="candidate-note-card">
+          <strong>Project Fit</strong>
+          <p>Supports job listing visibility, resume extraction, JD similarity, skill matching, ranking, and future HR reference.</p>
+        </div>
+      </article>
+    </section>
+
+    <section class="candidate-panel role-browser-panel">
+      <div class="section-heading">
+        <h2>All Open Roles Listed By HR</h2>
+        <p>Choose a role to read the job description first. Only HR can edit these descriptions in the admin portal.</p>
+      </div>
+
+      <div id="public-jobs-grid" class="public-job-grid">
+        <div class="empty-panel compact-empty">
+          <div>
+            <h2>No roles loaded yet</h2>
+            <p>Published roles from the admin panel will appear here.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="selected-role-shell">
+        <div id="selected-public-job-empty" class="empty-panel compact-empty">
+          <div>
+            <h2>Select a role</h2>
+            <p>Click any listed role above to read its full description and analyze your resume below it.</p>
+          </div>
+        </div>
+
+        <div id="selected-public-job-view" class="hidden">
+          <div class="selected-role-card">
+            <div class="role-header">
+              <div>
+                <p class="eyebrow bright-eyebrow">Selected Role</p>
+                <h2 id="selected-public-job-title"></h2>
+                <p id="selected-public-job-meta" class="muted-copy"></p>
+              </div>
+              <div class="role-badges">
+                <span id="selected-public-job-status" class="badge"></span>
+                <span id="selected-public-job-count" class="badge"></span>
+              </div>
+            </div>
+            <p id="selected-public-job-description" class="role-description candidate-role-description"></p>
+          </div>
+
+          <div class="candidate-analyze-shell">
+            <form id="profile-match-form" class="candidate-panel candidate-subcard">
+              <div class="section-heading">
+                <h2>Analyze Resume For This Role</h2>
+                <p>The role above stays read-only. Upload your resume below to fetch your profile and measure your fit.</p>
+              </div>
+
+              <label for="match_candidate_name">Full Name</label>
+              <input id="match_candidate_name" name="candidate_name" type="text" placeholder="Your full name">
+
+              <label for="match_email">Email</label>
+              <input id="match_email" name="email" type="email" placeholder="you@example.com">
+
+              <label for="match_phone">Phone Number</label>
+              <input id="match_phone" name="phone" type="text" placeholder="+91 98xxxxxx12">
+
+              <label for="match_resume">Upload Resume</label>
+              <input id="match_resume" name="resume" type="file" accept=".pdf,.docx,.txt" required>
+
+              <div class="button-row candidate-button-row">
+                <button type="submit" class="candidate-primary-button">Analyze Resume</button>
+                <a class="candidate-secondary-button text-button" href="/candidate/job-request" target="_blank" rel="noreferrer">Open Future Job Request Page</a>
+              </div>
+              <p id="match-status" class="input-hint">Your profile details and best-fit jobs will appear on the right.</p>
+            </form>
+
+            <div class="candidate-panel candidate-subcard">
+              <div class="section-heading">
+                <h2>Profile Match And Apply</h2>
+                <p>After analysis, apply to the selected job or any matching listed role. If no fit is found, send your resume to HR for future jobs.</p>
+              </div>
+
+              <div id="matched-profile-card" class="candidate-upload-help">
+                <strong>No resume analyzed yet</strong>
+                <p>Analyze your resume for the selected role to see your profile summary, contact info, and skills.</p>
+              </div>
+
+              <div id="selected-role-apply-card" class="apply-focus-card hidden"></div>
+
+              <div class="section-heading narrow-heading">
+                <h2>Other Matching Listed Roles</h2>
+                <p>These roles are fetched from the HR panel and compared with your uploaded resume.</p>
+              </div>
+              <div id="matched-jobs-grid" class="public-job-grid compact-job-grid">
+                <div class="empty-panel compact-empty">
+                  <div>
+                    <h2>No matched roles yet</h2>
+                    <p>Matching roles will appear here after resume analysis.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div id="request-fallback-box" class="candidate-note-card hidden">
+                <strong>No listed role matched your resume enough.</strong>
+                <p>You still have a chance to be considered. Open the future job request page and send your resume to HR for later openings related to your profile.</p>
+                <button id="request-fallback-button" type="button" class="candidate-secondary-button">Open Future Job Request Page</button>
+                <p id="request-status" class="input-hint">The request is stored in a separate Job Requests area inside the HR dashboard.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="candidate-panel candidate-form-card">
+      <div class="section-heading">
+        <h2>Manual Multi-Resume Analysis</h2>
+        <p>For project demo use, you can still paste any job description manually and rank multiple resumes in one go.</p>
+      </div>
+
+      <form id="screening-form" class="candidate-form-grid">
+        <div class="candidate-form-main">
+          <label for="job_description">Job Description</label>
+          <textarea id="job_description" name="job_description" rows="12">{{ sample_job_description }}</textarea>
+        </div>
+
+        <div class="candidate-form-side">
+          <label for="resumes">Upload Resumes</label>
+          <input id="resumes" name="resumes" type="file" multiple accept=".pdf,.docx,.txt">
+          <p class="input-hint">Supported formats: PDF, DOCX, TXT</p>
+
+          <div class="candidate-upload-help">
+            <strong>Manual Review Mode</strong>
+            <p>Use this to compare many candidate resumes at once against a custom role description.</p>
+          </div>
+
+          <div class="button-row candidate-button-row">
+            <button type="submit" id="submit-button" class="candidate-primary-button">Analyze Resumes</button>
+            <button type="button" id="load-sample-button" class="candidate-secondary-button">Load Sample Role</button>
+          </div>
+        </div>
+      </form>
+
+      <div class="status-card candidate-status-card" id="status-card">
+        <strong>Status</strong>
+        <p id="status-message">Ready to process resumes.</p>
+      </div>
+    </section>
+
+    <section class="candidate-panel results-panel">
+      <div class="section-heading">
+        <h2>Ranked Candidates</h2>
+        <p>Each result includes match score, candidate contact details, and extracted highlights in a larger visual layout.</p>
+      </div>
+
+      <div id="results-cards" class="results-card-grid">
+        <div class="empty-panel compact-empty">
+          <div>
+            <h2>No screening results yet</h2>
+            <p>Upload resumes above to generate ranked result cards.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="/static/js/app.js?v=20260517b"></script>
+</body>
+</html>

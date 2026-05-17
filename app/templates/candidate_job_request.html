@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Future Job Request</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/styles.css?v=20260517b">
+</head>
+<body class="candidate-body candidate-body-clean">
+  <div class="theme-orb orb-one"></div>
+  <div class="theme-orb orb-two"></div>
+
+  <div class="page-shell candidate-shell clean-candidate-shell">
+    <header class="candidate-header-bar">
+      <div>
+        <p class="eyebrow bright-eyebrow">Future Job Reference</p>
+        <h1 class="candidate-page-title">Send Resume To HR For Future Roles</h1>
+      </div>
+      <div class="candidate-nav-links">
+        <a class="candidate-link ghost" href="/" target="_blank" rel="noreferrer">Back To Candidate Page</a>
+        <a class="candidate-link solid" href="/hr/login" target="_blank" rel="noreferrer">Admin Login</a>
+      </div>
+    </header>
+
+    <section class="candidate-intro-card candidate-panel">
+      <div class="candidate-intro-copy">
+        <h2>No exact role listed yet? You can still reach HR.</h2>
+        <p>
+          Use this page when no matching job is found or when you want HR to keep your resume
+          for future requirements related to your profile.
+        </p>
+        <div class="candidate-intro-pills">
+          <span>{{ job_count }} listed roles</span>
+          <span>{{ job_request_count }} future requests tracked</span>
+          <span>Resume visible to HR</span>
+        </div>
+      </div>
+      <aside class="candidate-admin-card">
+        <strong>How HR sees this</strong>
+        <p>Your request goes to a separate Job Requests tab in the HR dashboard, with your resume, phone number, email, and profile summary.</p>
+      </aside>
+    </section>
+
+    <section class="candidate-panel candidate-form-card">
+      <div class="section-heading">
+        <h2>Future Job Request Form</h2>
+        <p>Upload your resume and mention the kind of role you want. HR can review it later for new openings.</p>
+      </div>
+
+      <form id="future-job-request-form" class="candidate-form-grid">
+        <div class="candidate-form-main">
+          <label for="future_requested_role">Role Preference</label>
+          <textarea id="future_requested_role" name="requested_role" rows="10" placeholder="Example: Python developer, AI/ML intern, data analyst, frontend developer, or any suitable role based on my resume."></textarea>
+        </div>
+
+        <div class="candidate-form-side">
+          <label for="future_candidate_name">Full Name</label>
+          <input id="future_candidate_name" name="candidate_name" type="text" placeholder="Your full name">
+
+          <label for="future_email">Email</label>
+          <input id="future_email" name="email" type="email" placeholder="you@example.com">
+
+          <label for="future_phone">Phone Number</label>
+          <input id="future_phone" name="phone" type="text" placeholder="+91 98xxxxxx12">
+
+          <label for="future_resume">Upload Resume</label>
+          <input id="future_resume" name="resume" type="file" accept=".pdf,.docx,.txt" required>
+
+          <div class="button-row candidate-button-row">
+            <button type="submit" class="candidate-primary-button">Send To HR</button>
+          </div>
+        </div>
+      </form>
+
+      <div class="status-card candidate-status-card">
+        <strong>Status</strong>
+        <p id="future-request-status">Ready to send your profile to HR.</p>
+      </div>
+    </section>
+  </div>
+
+  <script src="/static/js/app.js?v=20260517b"></script>
+</body>
+</html>

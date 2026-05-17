@@ -1,0 +1,17 @@
+Sneha Iyer
+Email: sneha.iyer@example.com
+Phone: +91 99887 77665
+
+Profile
+Machine learning engineer with 5 years of experience building NLP products, TensorFlow prototypes, scikit-learn models, and Python APIs for enterprise workflows.
+
+Skills
+Python, NLP, Machine Learning, TensorFlow, scikit-learn, FastAPI, PostgreSQL, Git, Docker, REST API
+
+Experience
+ML Engineer at RecruitAI
+Designed candidate scoring systems and job description similarity features.
+Worked on text extraction and skill matching for recruiter dashboards.
+
+Education
+Master of Computer Applications, National University
