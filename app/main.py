@@ -69,9 +69,48 @@ DEMO_JOB_ROLES = [
 
 
 DEMO_APPLICATIONS = [
-    {"job_index": 0, "file_name": "ananya_sharma_resume.txt", "manual_name": "Ananya Sharma", "manual_email": "", "manual_phone": ""},
-    {"job_index": 1, "file_name": "sneha_iyer_resume.txt", "manual_name": "Sneha Iyer", "manual_email": "", "manual_phone": ""},
-    {"job_index": 2, "file_name": "rahul_verma_resume.txt", "manual_name": "Rahul Verma", "manual_email": "", "manual_phone": ""},
+    {"job_index": 0, "file_name": "ananya_sharma_resume.txt", "manual_name": "Ananya Sharma", "manual_email": "ananya.sharma@example.com", "manual_phone": "+91 98765 43210"},
+    {"job_index": 0, "file_name": "sneha_iyer_resume.txt", "manual_name": "Sneha Iyer", "manual_email": "sneha.iyer@example.com", "manual_phone": "+91 99887 77665"},
+    {"job_index": 0, "file_name": "rahul_verma_resume.txt", "manual_name": "Rahul Verma", "manual_email": "rahul.verma@example.com", "manual_phone": "+91 91234 56789"},
+    {"job_index": 1, "file_name": "sneha_iyer_resume.txt", "manual_name": "Sneha Iyer", "manual_email": "sneha.iyer@example.com", "manual_phone": "+91 99887 77665"},
+    {"job_index": 1, "file_name": "ananya_sharma_resume.txt", "manual_name": "Ritika Malhotra", "manual_email": "ritika.malhotra@example.com", "manual_phone": "+91 99011 22334"},
+    {"job_index": 1, "file_name": "rahul_verma_resume.txt", "manual_name": "Karan Mehta", "manual_email": "karan.mehta@example.com", "manual_phone": "+91 98111 44556"},
+    {"job_index": 2, "file_name": "rahul_verma_resume.txt", "manual_name": "Rahul Verma", "manual_email": "rahul.verma@example.com", "manual_phone": "+91 91234 56789"},
+    {"job_index": 2, "file_name": "ananya_sharma_resume.txt", "manual_name": "Megha Sinha", "manual_email": "megha.sinha@example.com", "manual_phone": "+91 97000 33445"},
+    {"job_index": 3, "file_name": "ananya_sharma_resume.txt", "manual_name": "Ananya Sharma", "manual_email": "ananya.sharma@example.com", "manual_phone": "+91 98765 43210"},
+    {"job_index": 3, "file_name": "sneha_iyer_resume.txt", "manual_name": "Vikram Rao", "manual_email": "vikram.rao@example.com", "manual_phone": "+91 97777 66554"},
+]
+
+
+DEMO_JOB_REQUESTS = [
+    {
+        "file_name": "ananya_sharma_resume.txt",
+        "candidate_name": "Ananya Sharma",
+        "email": "ananya.sharma@example.com",
+        "phone": "+91 98765 43210",
+        "requested_role": "Any future Python / AI role related to my resume",
+    },
+    {
+        "file_name": "sneha_iyer_resume.txt",
+        "candidate_name": "Sneha Iyer",
+        "email": "sneha.iyer@example.com",
+        "phone": "+91 99887 77665",
+        "requested_role": "Future machine learning and NLP opportunities",
+    },
+    {
+        "file_name": "rahul_verma_resume.txt",
+        "candidate_name": "Rahul Verma",
+        "email": "rahul.verma@example.com",
+        "phone": "+91 91234 56789",
+        "requested_role": "Frontend or analyst role matching my web and SQL skills",
+    },
+    {
+        "file_name": "demo_resume_ananya.pdf",
+        "candidate_name": "Ritika Malhotra",
+        "email": "ritika.malhotra@example.com",
+        "phone": "+91 99011 22334",
+        "requested_role": "Open to future recruiter tech and ATS roles",
+    },
 ]
 
 
@@ -153,44 +192,66 @@ def seed_demo_content() -> None:
             created_or_existing_jobs.append(job)
         db.commit()
 
-        if db.query(JobApplication).count() == 0:
-            for item in DEMO_APPLICATIONS:
-                sample_path = SAMPLE_DATA_DIR / item["file_name"]
-                if not sample_path.exists():
-                    continue
-                content = sample_path.read_bytes()
-                parsed_text = extract_text_from_upload(sample_path.name, content)
-                application = build_application_record(
-                    job=created_or_existing_jobs[item["job_index"]],
-                    upload=UploadFile(filename=sample_path.name, file=BytesIO(content)),
-                    content=content,
-                    parsed_text=parsed_text,
-                    manual_name=item["manual_name"],
-                    manual_email=item["manual_email"],
-                    manual_phone=item["manual_phone"],
-                )
-                db.add(application)
+        existing_app_keys = {
+            (application.job_id, application.candidate_name, application.file_name)
+            for application in db.query(JobApplication).all()
+        }
+        added_applications = False
+        for item in DEMO_APPLICATIONS:
+            job = created_or_existing_jobs[item["job_index"]]
+            app_key = (job.id, item["manual_name"], item["file_name"])
+            if app_key in existing_app_keys:
+                continue
 
+            sample_path = SAMPLE_DATA_DIR / item["file_name"]
+            if not sample_path.exists():
+                continue
+            content = sample_path.read_bytes()
+            parsed_text = extract_text_from_upload(sample_path.name, content)
+            application = build_application_record(
+                job=job,
+                upload=UploadFile(filename=sample_path.name, file=BytesIO(content)),
+                content=content,
+                parsed_text=parsed_text,
+                manual_name=item["manual_name"],
+                manual_email=item["manual_email"],
+                manual_phone=item["manual_phone"],
+            )
+            db.add(application)
+            existing_app_keys.add(app_key)
+            added_applications = True
+
+        if added_applications:
             db.commit()
-
             for job in created_or_existing_jobs:
                 rerank_job_applications(db, job.id)
 
-        request_source = SAMPLE_DATA_DIR / "ananya_sharma_resume.txt"
-        if request_source.exists() and db.query(JobRequest).count() == 0:
+        existing_request_keys = {
+            (job_request.candidate_name, job_request.requested_role)
+            for job_request in db.query(JobRequest).all()
+        }
+        added_requests = False
+        for item in DEMO_JOB_REQUESTS:
+            request_key = (item["candidate_name"], item["requested_role"])
+            if request_key in existing_request_keys:
+                continue
+
+            request_source = SAMPLE_DATA_DIR / item["file_name"]
+            if not request_source.exists():
+                continue
             request_content = request_source.read_bytes()
             request_text = extract_text_from_upload(request_source.name, request_content)
-            request_payload = score_candidate(request_source.name, request_text, "Future role request based on resume")
+            request_payload = score_candidate(request_source.name, request_text, item["requested_role"])
             stored_name, stored_path = store_upload(request_content, request_source.name, "job-requests")
             db.add(
                 JobRequest(
                     file_name=request_source.name,
                     stored_file_name=stored_name,
                     resume_path=stored_path,
-                    candidate_name=request_payload["candidate_name"] or "Ananya Sharma",
-                    email=request_payload["email"] or "ananya.sharma@example.com",
-                    phone=request_payload["phone"] or "+91 98765 43210",
-                    requested_role="Any future Python / AI role related to my resume",
+                    candidate_name=item["candidate_name"],
+                    email=item["email"],
+                    phone=item["phone"],
+                    requested_role=item["requested_role"],
                     summary=short_summary(request_payload),
                     skills=serialize_list(request_payload["skills"]),
                     education=serialize_list(request_payload["education"]),
@@ -198,6 +259,10 @@ def seed_demo_content() -> None:
                     extracted_text=request_payload["extracted_text"],
                 )
             )
+            existing_request_keys.add(request_key)
+            added_requests = True
+
+        if added_requests:
             db.commit()
     finally:
         db.close()
