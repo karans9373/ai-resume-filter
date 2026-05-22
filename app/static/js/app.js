@@ -20,6 +20,13 @@ const selectedRoleApplyCard = document.getElementById("selected-role-apply-card"
 
 const profileMatchForm = document.getElementById("profile-match-form");
 const matchedProfileCard = document.getElementById("matched-profile-card");
+const atsScoreCard = document.getElementById("ats-score-card");
+const atsScoreValue = document.getElementById("ats-score-value");
+const atsScoreLabel = document.getElementById("ats-score-label");
+const atsScoreRating = document.getElementById("ats-score-rating");
+const atsSkillScore = document.getElementById("ats-skill-score");
+const atsSimilarityScore = document.getElementById("ats-similarity-score");
+const atsExperienceScore = document.getElementById("ats-experience-score");
 const matchedJobsGrid = document.getElementById("matched-jobs-grid");
 const matchStatus = document.getElementById("match-status");
 const requestFallbackBox = document.getElementById("request-fallback-box");
@@ -207,6 +214,7 @@ async function handleProfileMatchSubmit(event) {
   }
 
   const formData = new FormData(profileMatchForm);
+  formData.set("selected_job_id", String(selectedJob.id));
   latestResumeFile = resumeFile;
   setText(matchStatus, "Reading your resume and finding matching roles...");
   renderAnalyzingState(selectedJob);
@@ -225,8 +233,9 @@ async function handleProfileMatchSubmit(event) {
     lastMatchedJobs = payload.matches || [];
     storeCandidateProfile();
     renderMatchedProfile(payload.profile);
+    renderAtsScore(payload.selected_job_match, payload.top_overall_match, selectedJob);
     renderMatchedJobs(lastMatchedJobs);
-    renderSelectedRoleApply(selectedJob, lastMatchedJobs);
+    renderSelectedRoleApply(selectedJob, lastMatchedJobs, payload.selected_job_match);
     setText(
       matchStatus,
       payload.has_matches
@@ -257,6 +266,19 @@ function renderAnalyzingState(selectedJob) {
         </div>
       </div>
     `;
+  }
+
+  if (atsScoreCard) {
+    atsScoreCard.classList.remove("hidden");
+    atsScoreValue.textContent = "...";
+    atsScoreLabel.textContent = `Checking ATS-style fit for ${selectedJob.title}.`;
+    if (atsScoreRating) {
+      atsScoreRating.textContent = "Calculating";
+      atsScoreRating.className = "ats-rating-badge";
+    }
+    atsSkillScore.textContent = "Skill ...";
+    atsSimilarityScore.textContent = "Similarity ...";
+    atsExperienceScore.textContent = "Experience ...";
   }
 
   if (selectedRoleApplyCard) {
@@ -291,14 +313,68 @@ function renderMatchError(message) {
       </div>
     `;
   }
+
+  if (atsScoreCard) {
+    atsScoreCard.classList.remove("hidden");
+    atsScoreValue.textContent = "--";
+    atsScoreLabel.textContent = message;
+    if (atsScoreRating) {
+      atsScoreRating.textContent = "Unavailable";
+      atsScoreRating.className = "ats-rating-badge";
+    }
+    atsSkillScore.textContent = "Skill --";
+    atsSimilarityScore.textContent = "Similarity --";
+    atsExperienceScore.textContent = "Experience --";
+  }
 }
 
-function renderSelectedRoleApply(selectedJob, matches) {
+function renderAtsScore(selectedJobMatch, topOverallMatch, selectedJob) {
+  if (!atsScoreCard) {
+    return;
+  }
+
+  const scoreSource = selectedJobMatch || topOverallMatch;
+  if (!scoreSource) {
+    atsScoreCard.classList.add("hidden");
+    return;
+  }
+
+  const usingSelectedRole = selectedJobMatch && Number(selectedJobMatch.id) === Number(selectedJob.id);
+  atsScoreCard.classList.remove("hidden");
+  const score = Number(scoreSource.match_percentage || 0);
+  const rating = getAtsRating(score);
+  atsScoreValue.textContent = `${formatScore(score)}%`;
+  atsScoreLabel.textContent = usingSelectedRole
+    ? `ATS-style fit for ${selectedJob.title}`
+    : `Best ATS-style fit found for ${scoreSource.title}`;
+  if (atsScoreRating) {
+    atsScoreRating.textContent = rating.label;
+    atsScoreRating.className = `ats-rating-badge ${rating.className}`;
+  }
+  atsSkillScore.textContent = `Skill ${formatScore(scoreSource.skill_score)}%`;
+  atsSimilarityScore.textContent = `Similarity ${formatScore(scoreSource.similarity_score)}%`;
+  atsExperienceScore.textContent = `Experience ${formatScore(scoreSource.experience_score)}%`;
+}
+
+function getAtsRating(score) {
+  if (score >= 80) {
+    return { label: "Excellent", className: "excellent" };
+  }
+  if (score >= 65) {
+    return { label: "Good", className: "good" };
+  }
+  if (score >= 45) {
+    return { label: "Average", className: "average" };
+  }
+  return { label: "Needs Improvement", className: "needs-work" };
+}
+
+function renderSelectedRoleApply(selectedJob, matches, selectedJobMatch) {
   if (!selectedRoleApplyCard) {
     return;
   }
 
-  const matchedJob = matches.find((item) => Number(item.id) === Number(selectedJob.id));
+  const matchedJob = selectedJobMatch || matches.find((item) => Number(item.id) === Number(selectedJob.id));
   if (!matchedJob) {
     selectedRoleApplyCard.classList.remove("hidden");
     selectedRoleApplyCard.innerHTML = `

@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/styles.css?v=20260517c">
+  <link rel="stylesheet" href="/static/css/styles.css?v=20260517d">
 </head>
 <body class="candidate-body candidate-body-clean">
   <div class="app-loader" id="app-loader">
@@ -171,6 +171,7 @@
 
               <label for="match_resume">Upload Resume</label>
               <input id="match_resume" name="resume" type="file" accept=".pdf,.docx,.txt" required>
+              <input id="selected_job_id" name="selected_job_id" type="hidden">
 
               <div class="button-row candidate-button-row">
                 <button type="submit" class="candidate-primary-button">Analyze Resume</button>
@@ -188,6 +189,24 @@
               <div id="matched-profile-card" class="candidate-upload-help">
                 <strong>No resume analyzed yet</strong>
                 <p>Analyze your resume for the selected role to see your profile summary, contact info, and skills.</p>
+              </div>
+
+              <div id="ats-score-card" class="ats-score-card hidden">
+                <div class="ats-score-top">
+                  <div>
+                    <strong>ATS Score</strong>
+                    <p id="ats-score-label">Upload your resume to see your ATS-style fit for the selected role.</p>
+                  </div>
+                  <div class="ats-score-side">
+                    <div id="ats-score-value" class="ats-score-value">0%</div>
+                    <span id="ats-score-rating" class="ats-rating-badge">Not Rated</span>
+                  </div>
+                </div>
+                <div class="ranked-metric-row">
+                  <span class="meta-pill" id="ats-skill-score">Skill 0%</span>
+                  <span class="meta-pill" id="ats-similarity-score">Similarity 0%</span>
+                  <span class="meta-pill" id="ats-experience-score">Experience 0%</span>
+                </div>
               </div>
 
               <div id="selected-role-apply-card" class="apply-focus-card hidden"></div>

@@ -526,6 +526,7 @@ async def match_public_jobs(
     candidate_name: str = Form(""),
     email: str = Form(""),
     phone: str = Form(""),
+    selected_job_id: int | None = Form(None),
     resume: UploadFile = File(...),
     db: Session = Depends(get_db),
 ):
@@ -537,10 +538,17 @@ async def match_public_jobs(
     open_jobs = db.query(JobRole).filter(JobRole.status == "Open").order_by(JobRole.created_at.desc()).all()
 
     matches = []
+    selected_job_match = None
+    top_overall_match = None
     for job in open_jobs:
         score_payload = score_candidate(resume.filename, parsed_text, job.description)
+        serialized_match = serialize_matched_job(job, score_payload)
+        if top_overall_match is None or serialized_match["match_percentage"] > top_overall_match["match_percentage"]:
+            top_overall_match = serialized_match
+        if selected_job_id and job.id == selected_job_id:
+            selected_job_match = serialized_match
         if score_payload["match_percentage"] >= 20:
-            matches.append(serialize_matched_job(job, score_payload))
+            matches.append(serialized_match)
 
     matches.sort(key=lambda item: item["match_percentage"], reverse=True)
 
@@ -557,6 +565,8 @@ async def match_public_jobs(
         "profile": profile,
         "matches": matches,
         "has_matches": bool(matches),
+        "selected_job_match": selected_job_match,
+        "top_overall_match": top_overall_match,
     }
 
 
