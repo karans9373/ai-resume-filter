@@ -220,6 +220,40 @@ body {
   border: 1px solid rgba(255, 128, 126, 0.24);
 }
 
+.hr-dashboard-light .danger-button,
+.hr-light-body .danger-button,
+.login-body .danger-button {
+  color: #ffffff;
+  background: linear-gradient(135deg, #d74b4b, #b72f3a);
+  border: 1px solid rgba(144, 25, 35, 0.28);
+  box-shadow: 0 14px 24px rgba(183, 47, 58, 0.18);
+  position: relative;
+  padding-left: 18px;
+  padding-right: 18px;
+}
+
+.hr-dashboard-light .danger-button:hover,
+.hr-light-body .danger-button:hover,
+.login-body .danger-button:hover {
+  background: linear-gradient(135deg, #c94040, #a82733);
+  box-shadow: 0 18px 28px rgba(168, 39, 51, 0.22);
+}
+
+.hr-dashboard-light .danger-button::before,
+.hr-light-body .danger-button::before,
+.login-body .danger-button::before {
+  content: "×";
+  display: inline-block;
+  margin-right: 8px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.delete-application-button {
+  min-width: 180px;
+}
+
 .solid-link:hover,
 .ghost-link:hover,
 .primary-button:hover,
@@ -1705,11 +1739,84 @@ textarea {
 
 .hr-dashboard-light input,
 .hr-dashboard-light textarea,
+.hr-dashboard-light select,
 .login-body input,
-.login-body textarea {
+.login-body textarea,
+.login-body select {
   border: 1px solid rgba(46, 38, 28, 0.1);
   background: #fffdfa;
   color: #221f1a;
+}
+
+.hr-light-body .glass-card,
+.hr-dashboard-light .glass-card,
+.login-body .glass-card,
+.selected-role-card,
+.upload-panel,
+.dashboard-tabs-card,
+.hr-landing-card,
+.top-summary,
+.role-detail-card {
+  color: #221f1a;
+}
+
+.hr-light-body .glass-card h1,
+.hr-light-body .glass-card h2,
+.hr-light-body .glass-card h3,
+.hr-dashboard-light .glass-card h1,
+.hr-dashboard-light .glass-card h2,
+.hr-dashboard-light .glass-card h3,
+.login-body .glass-card h1,
+.login-body .glass-card h2,
+.login-body .glass-card h3,
+.selected-role-card h2,
+.selected-role-card h3,
+.dashboard-tabs-card h2,
+.dashboard-tabs-card h3,
+.hr-landing-card h2,
+.top-summary h2,
+.role-detail-card h2,
+.role-detail-card h3 {
+  color: #201914;
+}
+
+.hr-light-body .glass-card strong,
+.hr-dashboard-light .glass-card strong,
+.login-body .glass-card strong,
+.selected-role-card strong,
+.dashboard-tabs-card strong,
+.role-detail-card strong {
+  color: #2b2218;
+}
+
+.hr-light-body .glass-card p,
+.hr-light-body .glass-card li,
+.hr-dashboard-light .glass-card p,
+.hr-dashboard-light .glass-card li,
+.login-body .glass-card p,
+.selected-role-card p,
+.dashboard-tabs-card p,
+.role-detail-card p {
+  color: #6f6559;
+}
+
+.hr-dashboard-light label,
+.login-body label,
+.hr-light-body label,
+.role-edit-form label,
+.job-form label,
+.upload-form label {
+  color: #2b2218;
+}
+
+.hr-dashboard-light input::placeholder,
+.hr-dashboard-light textarea::placeholder,
+.hr-dashboard-light select::placeholder,
+.login-body input::placeholder,
+.login-body textarea::placeholder,
+.hr-light-body input::placeholder,
+.hr-light-body textarea::placeholder {
+  color: #8a7d6d;
 }
 
 .hr-dashboard-light .meta-pill,

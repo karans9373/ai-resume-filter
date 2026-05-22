@@ -378,6 +378,10 @@ function renderSelectedJob() {
   document.querySelectorAll(".delete-application-button").forEach((button) => {
     button.addEventListener("click", async () => {
       const applicationId = Number(button.dataset.id);
+      const confirmed = window.confirm("Delete this candidate from the role list?");
+      if (!confirmed) {
+        return;
+      }
       button.disabled = true;
       button.textContent = "Deleting...";
       await deleteApplication(applicationId);
